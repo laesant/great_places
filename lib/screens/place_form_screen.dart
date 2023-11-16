@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:great_places/widgets/image_input.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PlaceFormScreen extends StatefulWidget {
   const PlaceFormScreen({super.key});
@@ -17,17 +20,7 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
     super.dispose();
   }
 
-    _takePicture() async {
-    final ImagePicker _picker = ImagePicker();
-    XFile imageFile = await _picker.pickImage(
-      source: ImageSource.camera,
-      maxWidth: 600,
-    ) as XFile;
- 
-    setState(() {
-      _storedImage = File(imageFile.path);
-    });
-  }
+
 
   void _submitForm() {}
 
