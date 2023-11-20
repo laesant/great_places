@@ -9,34 +9,43 @@ class PlacesListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: const Text("Meus Lugares"),
-          actions: [
-            IconButton(
-                onPressed: () =>
-                    Navigator.of(context).pushNamed(AppRoutes.placeForm),
-                icon: const Icon(Icons.add))
-          ],
-        ),
-        body: Consumer<GreatPlaces>(
-          child: const Center(
-            child: Text('Nenhum local cadastrado'),
-          ),
-          builder: (context, value, child) => Visibility(
-            visible: value.itemsCount > 0,
-            replacement: child!,
-            child: ListView.builder(
-              itemCount: value.itemsCount,
-              itemBuilder: (context, index) => ListTile(
-                onTap: () {},
-                leading: CircleAvatar(
-                  backgroundImage: FileImage(value.itemByIndex(index).image),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text("Meus Lugares"),
+        actions: [
+          IconButton(
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(AppRoutes.placeForm),
+              icon: const Icon(Icons.add))
+        ],
+      ),
+      body: FutureBuilder(
+        future: Provider.of<GreatPlaces>(context, listen: false).loadPlaces(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return Consumer<GreatPlaces>(
+            child: const Center(
+              child: Text('Nenhum local cadastrado'),
+            ),
+            builder: (context, value, child) => Visibility(
+              visible: value.itemsCount > 0,
+              replacement: child!,
+              child: ListView.builder(
+                itemCount: value.itemsCount,
+                itemBuilder: (context, index) => ListTile(
+                  onTap: () {},
+                  leading: CircleAvatar(
+                    backgroundImage: FileImage(value.itemByIndex(index).image),
+                  ),
+                  title: Text(value.itemByIndex(index).title),
                 ),
-                title: Text(value.itemByIndex(index).title),
               ),
             ),
-          ),
-        ));
+          );
+        },
+      ),
+    );
   }
 }

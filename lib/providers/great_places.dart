@@ -12,6 +12,18 @@ class GreatPlaces with ChangeNotifier {
 
   int get itemsCount => _items.length;
 
+  Future<void> loadPlaces() async {
+    final dataList = await DbUtil.getData('places');
+    _items = dataList
+        .map((item) => Place(
+            id: item['id'],
+            title: item['title'],
+            location: PlaceLocation(latitude: 0, longitude: 0),
+            image: File(item['image'])))
+        .toList();
+    notifyListeners();
+  }
+
   Place itemByIndex(int index) => _items[index];
 
   void addPlace({required String title, required File image}) {

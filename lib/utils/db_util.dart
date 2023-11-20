@@ -10,6 +10,11 @@ class DbUtil {
     }, version: 1);
   }
 
+  static Future<List<Map<String, dynamic>>> getData(String table) async {
+    final db = await database();
+    return db.query(table);
+  }
+
   static Future<void> insert(String table, Map<String, dynamic> data) async {
     final db = await database();
     await db.insert(table, data, conflictAlgorithm: ConflictAlgorithm.replace);
