@@ -26,9 +26,17 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Selecione...'),
-      ),
+      appBar: AppBar(title: const Text('Selecione...'), actions: [
+        if (!widget.isReadOnly)
+          IconButton(
+            onPressed: _pickedPosition == null
+                ? null
+                : () {
+                    Navigator.of(context).pop(_pickedPosition);
+                  },
+            icon: const Icon(Icons.check),
+          )
+      ]),
       body: GoogleMap(
         onTap: widget.isReadOnly ? null : _selectPosition,
         markers: _pickedPosition == null
