@@ -35,11 +35,15 @@ class PlacesListScreen extends StatelessWidget {
               child: ListView.builder(
                 itemCount: value.itemsCount,
                 itemBuilder: (context, index) => ListTile(
-                  onTap: () {},
+                  onTap: () => Navigator.of(context).pushNamed(
+                      AppRoutes.placeDetail,
+                      arguments: value.itemByIndex(index)),
                   leading: CircleAvatar(
                     backgroundImage: FileImage(value.itemByIndex(index).image),
                   ),
                   title: Text(value.itemByIndex(index).title),
+                  subtitle:
+                      Text(value.itemByIndex(index).location.address ?? ""),
                 ),
               ),
             ),

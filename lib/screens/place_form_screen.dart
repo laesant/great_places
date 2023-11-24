@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:great_places/providers/great_places.dart';
 import 'package:great_places/widgets/image_input.dart';
 import 'package:great_places/widgets/location_input.dart';
@@ -17,6 +18,7 @@ class PlaceFormScreen extends StatefulWidget {
 class _PlaceFormScreenState extends State<PlaceFormScreen> {
   final _titleController = TextEditingController();
   File? _pickedImage;
+  LatLng? _pickedPosition;
 
   @override
   void dispose() {
@@ -24,12 +26,25 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
     super.dispose();
   }
 
-  void _selectImage(File pickedImage) => _pickedImage = pickedImage;
+  void _selectImage(File pickedImage) =>
+      setState(() => _pickedImage = pickedImage);
+
+  void _selectPosition(LatLng pickedPosition) =>
+      setState(() => _pickedPosition = pickedPosition);
+
+  bool _isValidForm() =>
+      _titleController.text.isNotEmpty &&
+      _pickedImage != null &&
+      _pickedPosition != null;
 
   void _submitForm() {
-    if (_titleController.text.isEmpty || _pickedImage == null) return;
-    Provider.of<GreatPlaces>(context, listen: false)
-        .addPlace(title: _titleController.text, image: _pickedImage!);
+    if (!_isValidForm()) return;
+
+    Provider.of<GreatPlaces>(context, listen: false).addPlace(
+        title: _titleController.text,
+        image: _pickedImage!,
+        position: _pickedPosition!);
+
     Navigator.of(context).pop();
   }
 
@@ -54,11 +69,14 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
                       decoration: const InputDecoration(
                         labelText: 'Título',
                       ),
+                      onChanged: (_) {
+                        setState(() {});
+                      },
                     ),
                     const SizedBox(height: 10),
                     ImageInput(selectImage: _selectImage),
                     const SizedBox(height: 10),
-                    const LocationInput()
+                    LocationInput(selectPosition: _selectPosition)
                   ],
                 ),
               ),
@@ -68,7 +86,7 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     elevation: 0,
                     shape: const RoundedRectangleBorder()),
-                onPressed: _submitForm,
+                onPressed: _isValidForm() ? _submitForm : null,
                 icon: const Icon(Icons.add),
                 label: const Text("Adicionar"))
           ],
